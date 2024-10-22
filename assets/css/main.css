@@ -4,8 +4,20 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --accent_text: #212121;
+  --accent_blue: #4054F7;
+  --bg_white: #FFFFFF;
+  --bg_light: #F1F1F1;
+  --bg_lighter: #F3F3F3;
+  --bg_gray: #EAEAEA;
+}
 
 body {
   font-family: 'Open Sans', sans-serif;
-  color: var(--text-color);
+  color: var(--accent_text);
+}
+
+.accent-blue {
+  color: var(--accent_blue);
 }

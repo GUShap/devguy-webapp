@@ -3,8 +3,6 @@ const props = defineProps({
     pageData: Object,
     slug: String,
 });
-
-// if(slug == 'home'){}
 </script>
 
 <template>

@@ -20,7 +20,7 @@ const { data, error, refresh } = await useFetch(`${apiURL}/pages`, {
 </script>
 
 <template>
-    <div>
+    <div class="bg-bg_light">
         <Header :slug="slug" />
         <NuxtLayout name="content" :pageData="data[0]" :slug></NuxtLayout>
 
