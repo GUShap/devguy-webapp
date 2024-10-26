@@ -1,5 +1,5 @@
 <template>
-    <section class="about relative px-20 pb-80 opacity-0 top-[180px] z-10 max-w-[1050px]" ref="aboutSection">
+    <section class="about relative px-20 h-[120vh] opacity-0 top-[180px] z-10 max-w-[1050px]" ref="aboutSection">
         <div class="py-0">
             <h2 class="text-7xl font-bold" v-html="acfData.about_title"></h2>
             <div class="content flex relative">
@@ -7,9 +7,9 @@
                     <img :src="aboutImageData.url" :alt="aboutImageData.alt" :title="aboutImageData.title"
                         class="main-about-image" ref="mainAboutImage">
                 </div>
-                <div class="text-wrapper flex flex-col gap-10 pt-4">
-                    <div class="about-content mt-10">
-                        <p class="text-2 max-w-[65ch]">{{ acfData.about_subtitle }}</p>
+                <div class="text-wrapper flex flex-col gap-10">
+                    <div class="about-content mt-[40px]">
+                        <p class="text-2 max-w-[340px]">{{ acfData.about_subtitle }}</p>
                     </div>
                     <div class="cta">
                         <a class="btn btn-primary bg-accent_text text-bg_white rounded-full pl-8 pr-12 py-2"
@@ -24,64 +24,100 @@
 </template>
 
 <script setup>
+import { ref, onMounted, defineEmits } from 'vue';
+import { useNuxtApp } from '#app'; // Importing Nuxt app to access the event bus
+
 const props = defineProps({
     aboutImageData: Object,
-    aboutScrollEffectImageData: Object,
     acfData: Object,
 });
 
-</script>
-<script>
+const aboutSection = ref(null);
+const emit = defineEmits();
 
-export default {
-    mounted() {
-        const setHeroScroll = ($heroSection, distancePercentage) => {
-            const opacity = 1 - distancePercentage;
-            const rotateX = 150 * distancePercentage + 'deg';
+function setHeroScroll($heroSection, distancePercentage) {
+    const opacity = 1 - distancePercentage;
+    const rotateX = 150 * distancePercentage + 'deg';
 
-            const addedGap = distancePercentage * 70 < 30 ? '28px' : distancePercentage * 70 + 'px';
+    $heroSection.style.opacity = opacity;
+    $heroSection.style.transform = `rotateX(${rotateX}) translateX(${-distancePercentage * 90}%)`;
+}
 
-            $heroSection.style.opacity = opacity;
-            $heroSection.style.transform = `rotateX(${rotateX}) translateX(${-distancePercentage * 90}%)`;
+function setAboutScroll($aboutSection, distancePercentage, aboutSectionTop) {
+    const $aboutImage = aboutSection.value.querySelector('.main-about-image');
+    const $aboutTitle = $aboutSection.querySelector('h2');
+    const $aboutContent = $aboutSection.querySelector('.text-wrapper');
+    const opacity = distancePercentage;
+    const topThreshold = 230;
+    const translateX = ((aboutSectionTop - topThreshold) * 100 / topThreshold).toFixed(3) + '%';
+    const aboutTextOffsetLeft = $aboutContent.offsetLeft;
+
+    $aboutSection.style.opacity = opacity;
+
+    if (distancePercentage >= 0.998) {
+        $aboutImage.classList.add('fixed');
+        $aboutImage.style.bottom = 0;
+    } else {
+        $aboutImage.classList.remove('fixed');
+    }
+
+    if (aboutSectionTop < topThreshold) {
+        const contentStyle = {
+            position: 'fixed',
+            top: topThreshold + $aboutTitle.offsetHeight + 'px',
+            left: aboutTextOffsetLeft + 'px',
+            transform: `translateX(calc(80px - ${translateX}))`,
+            opacity: (aboutSectionTop - 60) / 100
+        };
+        const titleStyle = {
+            position: 'fixed',
+            top: topThreshold + 'px',
+            transform: `translateX(${translateX})`,
+            opacity: (aboutSectionTop - 60) / 100
         };
 
-        const setAboutScroll = ($aboutSection, distancePercentage) => {
-            const opacity = distancePercentage;
-            const translateX = 30 * (1 - distancePercentage) + '%';
-            const $aboutImage = this.$refs.mainAboutImage;
-            $aboutSection.style.opacity = opacity;
-
-            if (distancePercentage > 0.898) {
-                $aboutImage.style.position = 'fixed';
-                $aboutImage.style.bottom = 0;
-            } else {
-                $aboutImage.style.position = 'relative';
-            }
-        };
-        const originalTop = this.$refs.aboutSection.getBoundingClientRect().top;
-        window.addEventListener('scroll', () => {
-            const $heroSection = document.querySelector('.hero');
-            const $aboutSection = this.$refs.aboutSection;
-
-            const aboutSectionTop = $aboutSection.getBoundingClientRect().top;
-            const lowerLimit = 250;
-            const upperLimit = originalTop - 10;
-            if (aboutSectionTop > lowerLimit && aboutSectionTop < upperLimit) {
-                const distancePercentage = (aboutSectionTop - upperLimit) / (lowerLimit - upperLimit);
-                $aboutSection.style.opacity = distancePercentage;
-
-                setAboutScroll($aboutSection, distancePercentage);
-                setHeroScroll($heroSection, distancePercentage);
-            }
-            if (aboutSectionTop < lowerLimit) {
-                setAboutScroll($aboutSection, 1);
-                setHeroScroll($heroSection, 1);
-            }
-            if (aboutSectionTop > upperLimit) {
-                setAboutScroll($aboutSection, 0);
-                setHeroScroll($heroSection, 0);
-            }
-        });
+        $aboutImage.style.transform = `translateX(${translateX})`;
+        Object.assign($aboutContent.style, contentStyle);
+        Object.assign($aboutTitle.style, titleStyle);
+    } else {
+        $aboutTitle.style.position = 'unset';
+        $aboutTitle.style.transform = `translateX(0)`;
+        $aboutContent.style.position = 'unset';
+        $aboutContent.style.transform = `translateX(0)`;
     }
 }
+
+onMounted(() => {
+    const $heroSection = document.querySelector('.hero');
+    const $aboutSection = aboutSection.value;
+    const originalTop = $aboutSection.offsetTop;
+
+    window.addEventListener('scroll', () => {
+        const currentScroll = window.scrollY || document.documentElement.scrollTop;
+        const aboutSectionTop = $aboutSection.offsetTop - currentScroll;
+        const lowerLimit = 290;
+        const upperLimit = originalTop - 10;
+
+        if (aboutSectionTop > lowerLimit && aboutSectionTop < upperLimit) {
+            const distancePercentage = ((aboutSectionTop - upperLimit) / (lowerLimit - upperLimit)).toFixed(3);
+            $aboutSection.style.opacity = distancePercentage;
+
+            setAboutScroll($aboutSection, distancePercentage, aboutSectionTop);
+            setHeroScroll($heroSection, distancePercentage);
+
+            // Emit the updated top offset using mitt
+          emit('updateAboutSectionTop', aboutSectionTop);
+        }
+
+        if (aboutSectionTop > upperLimit) {
+            setAboutScroll($aboutSection, 0, aboutSectionTop);
+            setHeroScroll($heroSection, 0);
+        }
+
+        if (aboutSectionTop < lowerLimit) {
+            setAboutScroll($aboutSection, 1, aboutSectionTop);
+            setHeroScroll($heroSection, 1);
+        }
+    });
+});
 </script>

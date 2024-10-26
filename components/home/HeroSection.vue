@@ -5,7 +5,7 @@ const props = defineProps({
 </script>
 
 <template>
-    <section class="hero pt-2 pb-12 px-20 sticky top-[160px]" ref="heroSection">
+    <section class="hero pt-2 pb-44 px-20 sticky top-[160px]" ref="heroSection">
         <div class="content-wrapper flex flex-col gap-y-8">
             <h1 class="main-title text-7xl font-extrabold" v-html="acfData.title"></h1>
             <div class="subtitle">

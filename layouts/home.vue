@@ -1,16 +1,22 @@
 <script setup>
+const aboutSectionTop = ref(0);
+
+// Method to update the top value from the child component
+const updateTop = (newTop) => {
+    aboutSectionTop.value = newTop;
+};
 const props = defineProps({
     pageData: Object,
 });
-
 const acfData = ref(props.pageData.acf);
-const { animation, about_image, about_scroll_effect_image } = toRefs(props.pageData.acf);
+const { animation, about_image } = toRefs(props.pageData.acf);
 const config = useRuntimeConfig();
 const { siteURL, apiURL } = config.public;
 
 const { data: heroImageData } = await useFetch(`${apiURL}/media/${animation.value}`);
 const { data: aboutImageData } = await useFetch(`${apiURL}/media/${about_image.value}`);
 
+provide('aboutSectionTop', aboutSectionTop);
 </script>
 
 <template>
@@ -18,7 +24,10 @@ const { data: aboutImageData } = await useFetch(`${apiURL}/media/${about_image.v
         <div class="top">
             <FloatingGlobe :heroImageData />
             <HomeHeroSection :acfData />
-            <HomeAbouteSection :aboutImageData :acfData />
+            <HomeAbouteSection :aboutImageData :acfData @updateAboutSectionTop="updateTop" />
+        </div>
+        <div class="middle pt-12">
+            <HomeServicesSection :acfData/>
         </div>
     </div>
 </template>
