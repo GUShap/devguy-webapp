@@ -48,9 +48,9 @@ onMounted(() => {
 <template>
     <section class="services pt-44 pb-16 px-20 fixed top-full left-0 right-0 transition-top duration-500 h-[100vh] ease-in-out bg-accent_blue text-[#fff]" ref="servicesSection">
         <div class="content-wrapper flex flex-col gap-y-8">
-            <h2 class="main-title text-4xl font-extrabold" v-html="acfData.services_title"></h2>
+            <h1 class="main-title text-6xl font-bold text-center uppercase" v-html="acfData.services_title"></h1>
             <div class="subtitle">
-                <p class="text-2 max>W-[65ch]">{{ acfData.services_subtitle }}</p>
+                <p class="text-2 max>W-[65ch] text-center w-[55ch] m-auto">{{ acfData.services_subtitle }}</p>
             </div>
         </div>
     </section>

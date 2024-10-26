@@ -24,9 +24,6 @@
 </template>
 
 <script setup>
-import { ref, onMounted, defineEmits } from 'vue';
-import { useNuxtApp } from '#app'; // Importing Nuxt app to access the event bus
-
 const props = defineProps({
     aboutImageData: Object,
     acfData: Object,
@@ -42,7 +39,6 @@ function setHeroScroll($heroSection, distancePercentage) {
     $heroSection.style.opacity = opacity;
     $heroSection.style.transform = `rotateX(${rotateX}) translateX(${-distancePercentage * 90}%)`;
 }
-
 function setAboutScroll($aboutSection, distancePercentage, aboutSectionTop) {
     const $aboutImage = aboutSection.value.querySelector('.main-about-image');
     const $aboutTitle = $aboutSection.querySelector('h2');

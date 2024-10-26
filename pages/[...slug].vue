@@ -13,16 +13,20 @@ if (route.params.slug) {
 } else {
     slug.value = 'home';
 }
-const { data, error, refresh } = await useFetch(`${apiURL}/pages`, {
+const { data: pageData } = await useFetch(`${apiURL}/pages`, {
     query: { slug: slug.value },
 });
-
+const { data: logosData } = await useFetch(`${apiURL}/options`, {
+    params: {
+        setting: 'all'
+    },
+});
 </script>
 
 <template>
     <div class="bg-bg_light">
-        <Header :slug="slug" />
-        <NuxtLayout name="content" :pageData="data[0]" :slug></NuxtLayout>
+        <Header :slug :logosData />
+        <NuxtLayout name="content" :pageData="pageData[0]" :slug></NuxtLayout>
 
     </div>
 </template>
