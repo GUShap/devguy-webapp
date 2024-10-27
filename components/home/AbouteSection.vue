@@ -30,6 +30,7 @@ const props = defineProps({
 });
 
 const aboutSection = ref(null);
+const aboutImageOffset = useAboutImageOffset();
 const emit = defineEmits();
 
 function setHeroScroll($heroSection, distancePercentage) {
@@ -81,6 +82,10 @@ function setAboutScroll($aboutSection, distancePercentage, aboutSectionTop) {
         $aboutContent.style.position = 'unset';
         $aboutContent.style.transform = `translateX(0)`;
     }
+
+    aboutImageOffset.value = $aboutImage.getBoundingClientRect();
+
+    console.log(aboutImageOffset.value);
 }
 
 onMounted(() => {
@@ -102,7 +107,7 @@ onMounted(() => {
             setHeroScroll($heroSection, distancePercentage);
 
             // Emit the updated top offset using mitt
-          emit('updateAboutSectionTop', aboutSectionTop);
+            emit('updateAboutSectionTop', aboutSectionTop);
         }
 
         if (aboutSectionTop > upperLimit) {

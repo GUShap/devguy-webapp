@@ -4,7 +4,7 @@ const props = defineProps({
 });
 const aboutSectionTop = inject('aboutSectionTop');
 const servicesSection = ref(null);
-const bgMode = useBgMode()
+const bgMode = useBgMode();
 
 let prevAboutSectionTop = 0;
 let scrollCounter = 0;
